@@ -7,32 +7,78 @@
 #include <Windows.h>
 #include <functional>
 
-class MedianFinder {
-	std::vector<int> vals_;
-	std::vector<int> alt_;
-	std::set<int> val_set_;
-	std::set<int>::iterator ite_;
-	int ite_pos_;
-	int64_t t_locate_, t_copy_;
+template<typename T>
+class median_finder_impl_merge_t
+{
+	typedef T ele_typ;
+	std::vector<ele_typ> vals_;
 public:
-	MedianFinder() : t_locate_(0), t_copy_(0) {}
-
-	// Adds a number into the data structure.
-	void addNum1(int num)
+	void add_num(ele_typ num)
 	{
 		vals_.push_back(num);
 		if (vals_.size() >= 2)
 			std::inplace_merge(vals_.begin(), --vals_.end(), vals_.end());
 	}
-	void addNum2(int num) {
+
+	double find_median()
+	{
+		int64_t pos = vals_.size() >> 1;
+		if (vals_.size() & 1)
+			return vals_[pos];
+		else
+			return (vals_[pos - 1] + vals_[pos]) / 2.0;
+	}
+};
+
+template<typename T>
+class median_finder_impl_set_t
+{
+	typedef T ele_typ;
+	std::set<ele_typ> vals_;
+public:
+	void add_num(ele_typ num)
+	{
+		vals_.insert(num);
+	}
+
+	double find_median()
+	{
+		int64_t pos = vals_.size() >> 1;
+		auto ite = vals_.begin();
+		if (vals_.size() & 1)
+		{
+			for (int64_t i = 0; i < pos; ++i)
+				++ite;
+
+			return *ite;
+		}
+		else
+		{
+			--pos;
+			for (int64_t i = 0; i < pos; ++i)
+				++ite;
+
+			ele_typ val = *ite;
+			ele_typ val_1 = *(++ite);
+			return (val + val_1) / 2.0;
+		}
+	}
+};
+
+template<typename T>
+class median_finder_impl_merge_ex_t {
+	typedef T ele_typ;
+	std::vector<ele_typ> vals_;
+	std::vector<ele_typ> alt_;
+public:
+	// Adds a number into the data structure.
+	void add_num(ele_typ num) {
 		if (vals_.size() == 0)
 			vals_.push_back(num);
 		else
 		{
 			alt_.resize(0);
 
-			int64_t t0, t1, t2;
-			QueryPerformanceCounter((LARGE_INTEGER*)&t0);
 			int count = vals_.size();
 			int cur = 0, stop = vals_.size();
 			if (num < vals_[0])
@@ -50,7 +96,6 @@ public:
 						cur = pos;
 				}
 			}
-			QueryPerformanceCounter((LARGE_INTEGER*)&t1);
 
 			int i = 0;
 			for (; i <= cur; ++i)
@@ -62,73 +107,31 @@ public:
 				alt_.push_back(vals_[i]);
 
 			std::swap(vals_, alt_);
-			QueryPerformanceCounter((LARGE_INTEGER*)&t2);
-			t_locate_ += t1 - t0;
-			t_copy_ += t2 - t1;
-		}
-	}
-
-	void addNum(int num)
-	{
-		val_set_.insert(num);
-		if (val_set_.size() == 1)
-		{
-			ite_ = val_set_.begin();
-			ite_pos_ = 0;
-		}
-		else
-		{
-			if (num < *ite_)
-				++ite_pos_;
 		}
 	}
 
 	// Returns the median of current data stream
-	double findMedian1() {
+	double find_median() {
 		int pos = vals_.size() >> 1;
 		if (vals_.size() & 1)
 			return vals_[pos];
 		else
 			return (vals_[pos - 1] + vals_[pos]) / 2.0;
 	}
-
-	double findMedian()
-	{
-		int count = val_set_.size();
-		int pos = count >> 1;
-		if (count & 1)
-		{
-			for (int i = ite_pos_; i < pos; ++i)
-				++ite_;
-
-			return *ite_;
-		}
-		else
-		{
-			--pos;
-			
-			for (int i = ite_pos_; i < pos; ++i)
-				++ite_;
-
-			int val = *ite_;
-			int val1 = *(++ite_);
-			return (val + val1) / 2.0;
-		}
-	}
-	void profile()
-	{
-		int64_t freq;
-		QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
-		fprintf(stdout, "locating costs %I64dms, copying costs %I64dms\n", t_locate_ * 1000 / freq, t_copy_ * 1000 / freq);
-	}
 };
 
-class MedianFinderEx {
+template<typename T>
+class median_finder_impl_2heap_t 
+{
+	typedef T ele_typ;
+	int count_;
+	std::priority_queue<ele_typ, vector<ele_typ>, std::greater<ele_typ>> rhs_heap_;
+	std::priority_queue<ele_typ, vector<ele_typ>, std::less<ele_typ>> lhs_heap_;
 public:
-	MedianFinderEx() :count_(0){}
+	median_finder_impl_2heap_t() :count_(0){}
 
 	// Adds a number into the data structure.
-	void addNum(int num) 
+	void add_num(ele_typ num) 
 	{
 		if (count_ & 1)
 		{
@@ -161,7 +164,7 @@ public:
 	}
 
 	// Returns the median of current data stream
-	double findMedian() {
+	double find_median() {
 		if (count_ & 1){
 			return rhs_heap_.top();
 		}
@@ -170,9 +173,22 @@ public:
 			return (lhs_heap_.top() + rhs_heap_.top()) / 2.0;
 		}
 	}
+};
 
-private:
-	int count_;
-	std::priority_queue<int, vector<int>, std::greater<int>> rhs_heap_;
-	std::priority_queue<int, vector<int>, std::less<int>> lhs_heap_;
+class MedianFinder
+{
+	//median_finder_impl_merge_t<int> impl_;
+	median_finder_impl_2heap_t<int> impl_;
+	//median_finder_impl_set_t<int> impl_;
+	//median_finder_impl_merge_ex_t<int> impl_;
+public:
+	void addNum(int num)
+	{
+		impl_.add_num(num);
+	}
+
+	double findMedian()
+	{
+		return impl_.find_median();
+	}
 };
