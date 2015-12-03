@@ -8,62 +8,34 @@
 #include <functional>
 
 template<typename T>
-class median_finder_impl_merge_ex2_t
+class median_finder_impl_merge_t
 {
 	typedef T ele_typ;
 	std::vector<ele_typ> vals_;
 	int64_t unordered_count_;
 public:
-	median_finder_impl_merge_ex2_t() : unordered_count_(0) {}
+	median_finder_impl_merge_t() : unordered_count_(0) {}
 
 	void add_num(ele_typ num)
 	{
 		vals_.push_back(num);
 		++unordered_count_;
-//		if (vals_.size() >= 2)
-//			std::inplace_merge(vals_.begin(), --vals_.end(), vals_.end());
 	}
 
 	double find_median()
 	{
 		if (unordered_count_ > 0)
 		{
-			if (unordered_count_ == 1)
-				std::inplace_merge(vals_.begin(), vals_.end() - 1, vals_.end());
-			else
-			{
-				auto ite = vals_.end() - unordered_count_;
-				std::sort(ite, vals_.end());
+			auto mid_ite = vals_.end() - unordered_count_;
 
-				std::inplace_merge(vals_.begin(), ite, vals_.end());
-			}
-			
+			if (unordered_count_ > 1)
+				std::sort(mid_ite, vals_.end());
+
+			std::inplace_merge(vals_.begin(), mid_ite, vals_.end());
+
 			unordered_count_ = 0;
 		}
 
-		int64_t pos = vals_.size() >> 1;
-		if (vals_.size() & 1)
-			return vals_[pos];
-		else
-			return (vals_[pos - 1] + vals_[pos]) / 2.0;
-	}
-};
-
-template<typename T>
-class median_finder_impl_merge_t
-{
-	typedef T ele_typ;
-	std::vector<ele_typ> vals_;
-public:
-	void add_num(ele_typ num)
-	{
-		vals_.push_back(num);
-		if (vals_.size() >= 2)
-			std::inplace_merge(vals_.begin(), --vals_.end(), vals_.end());
-	}
-
-	double find_median()
-	{
 		int64_t pos = vals_.size() >> 1;
 		if (vals_.size() & 1)
 			return vals_[pos];
@@ -77,88 +49,120 @@ class median_finder_impl_set_t
 {
 	typedef T ele_typ;
 	std::set<ele_typ> vals_;
+	int64_t lhs_count_, rhs_count_;
+	typename std::set<ele_typ>::iterator mid_ite_;
 public:
 	void add_num(ele_typ num)
 	{
 		vals_.insert(num);
+
+		if (vals_.size() == 1)
+		{
+			mid_ite_ = vals_.begin();
+			lhs_count_ = 0;
+			rhs_count_ = 0;
+		}
+		else
+		{
+			lhs_count_ += (num < *mid_ite_);
+			rhs_count_ += (num > *mid_ite_);
+		}
 	}
 
 	double find_median()
 	{
-		int64_t pos = vals_.size() >> 1;
-		auto ite = vals_.begin();
-		if (vals_.size() & 1)
+		int64_t eq_count = vals_.size() - lhs_count_ - rhs_count_;
+		//jump to 0 pos in eq area
+		auto ite = mid_ite_;
+		if (eq_count > 1)
 		{
-			for (int64_t i = 0; i < pos; ++i)
-				++ite;
+			ele_typ tmp_mid_val = *ite;
+			while (ite != vals_.begin() && *ite == tmp_mid_val)
+				--ite;
 
-			return *ite;
+			if (*ite != tmp_mid_val)
+				++ite;
 		}
+
+		//adjust mid post
+		int64_t pos = vals_.size() >> 1;
+		//jump to calculated mid pos
+		int64_t pos_rel_eq = (vals_.size() & 1) ? pos - lhs_count_ : pos - 1 - lhs_count_;
+		ele_typ mid_val = *ite;
+		if (pos_rel_eq > 0)
+		{
+			int64_t range_count = 0;
+			for (int64_t i = 0; i < pos_rel_eq; ++i)
+			{
+				auto tmp_ite = ite;
+				++ite;
+				++range_count;
+
+				if (*tmp_ite != *ite)
+				{
+					lhs_count_ += range_count;
+					if (*tmp_ite != mid_val)
+						rhs_count_ -= range_count;
+					range_count = 0;
+				}
+			}
+
+			if (*ite != mid_val)
+			{
+				mid_val = *ite;
+				auto tmp_ite = ite;
+				while (tmp_ite != vals_.end() && *tmp_ite == mid_val)
+				{
+					++tmp_ite;
+					++range_count;
+				}
+
+				rhs_count_ -= range_count;
+			}
+
+		}
+		else if (pos_rel_eq < 0)
+		{
+			int64_t range_count = eq_count - 1;
+			for (int64_t i = pos_rel_eq; i < 0; ++i)
+			{
+				auto tmp_ite = ite;
+				--ite;
+				++range_count;
+
+				if (*tmp_ite != *ite)
+				{
+					rhs_count_ += range_count;
+					if (*tmp_ite != mid_val)
+						lhs_count_ -= range_count;
+					range_count = 0;
+				}
+			}
+
+			if (*ite != mid_val)
+			{
+				mid_val = *ite;
+				auto tmp_ite = ite;
+				range_count = tmp_ite == vals_.begin() ? 1 : 0;
+				while (tmp_ite != vals_.begin() && *tmp_ite == mid_val)
+				{
+					--tmp_ite;
+					++range_count;
+				}
+
+				lhs_count_ -= range_count;
+			}
+		}			
+		mid_ite_ = ite;
+
+		if (vals_.size() & 1)
+			return *ite;
 		else
 		{
-			--pos;
-			for (int64_t i = 0; i < pos; ++i)
-				++ite;
-
 			ele_typ val = *ite;
 			ele_typ val_1 = *(++ite);
 			return (val + val_1) / 2.0;
 		}
-	}
-};
-
-template<typename T>
-class median_finder_impl_merge_ex_t {
-	typedef T ele_typ;
-	std::vector<ele_typ> vals_;
-	std::vector<ele_typ> alt_;
-public:
-	// Adds a number into the data structure.
-	void add_num(ele_typ num) {
-		if (vals_.size() == 0)
-			vals_.push_back(num);
-		else
-		{
-			alt_.resize(0);
-
-			int count = vals_.size();
-			int cur = 0, stop = vals_.size();
-			if (num < vals_[0])
-				cur = -1;
-			else if (num > vals_[count - 1])
-				cur = count - 1;
-			else
-			{
-				while (stop - cur > 1)
-				{
-					int pos = (stop + cur) >> 1;
-					if (vals_[pos] > num)
-						stop = pos;
-					else
-						cur = pos;
-				}
-			}
-
-			int i = 0;
-			for (; i <= cur; ++i)
-				alt_.push_back(vals_[i]);
-
-			alt_.push_back(num);
-
-			for (; i < count; ++i)
-				alt_.push_back(vals_[i]);
-
-			std::swap(vals_, alt_);
-		}
-	}
-
-	// Returns the median of current data stream
-	double find_median() {
-		int pos = vals_.size() >> 1;
-		if (vals_.size() & 1)
-			return vals_[pos];
-		else
-			return (vals_[pos - 1] + vals_[pos]) / 2.0;
 	}
 };
 
@@ -220,18 +224,26 @@ public:
 class MedianFinder
 {
 	//median_finder_impl_merge_t<int> impl_;
-	//median_finder_impl_merge_ex_t<int> impl_;
-	//median_finder_impl_merge_ex2_t<int> impl_;
-	median_finder_impl_2heap_t<int> impl_;
-	//median_finder_impl_set_t<int> impl_;
+	median_finder_impl_2heap_t<int> impl_1_;
+	median_finder_impl_set_t<int> impl_;
 public:
 	void addNum(int num)
 	{
+		fprintf(stdout, "%d, ", num);
+		impl_1_.add_num(num);
 		impl_.add_num(num);
 	}
 
 	double findMedian()
 	{
-		return impl_.find_median();
+		double mval1 = impl_1_.find_median();
+		double mval = impl_.find_median();
+		if (mval == mval1)
+			return mval;
+		else
+		{
+			fprintf(stdout, "\n2heap returns %I64f, set returns %I64f\n", mval1, mval);
+			return mval1;
+		}
 	}
 };
