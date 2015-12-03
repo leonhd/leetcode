@@ -19,6 +19,8 @@ void test_median_finder(int count)
 	for (int i = 0; i < count; ++i)
 	{
 		mf.addNum(data[i]);
+
+		if (i % 100 == 0)
 		median.push_back(mf.findMedian());
 	}
 	QueryPerformanceCounter((LARGE_INTEGER*)&t1);

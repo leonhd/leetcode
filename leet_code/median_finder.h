@@ -8,6 +8,48 @@
 #include <functional>
 
 template<typename T>
+class median_finder_impl_merge_ex2_t
+{
+	typedef T ele_typ;
+	std::vector<ele_typ> vals_;
+	int64_t unordered_count_;
+public:
+	median_finder_impl_merge_ex2_t() : unordered_count_(0) {}
+
+	void add_num(ele_typ num)
+	{
+		vals_.push_back(num);
+		++unordered_count_;
+//		if (vals_.size() >= 2)
+//			std::inplace_merge(vals_.begin(), --vals_.end(), vals_.end());
+	}
+
+	double find_median()
+	{
+		if (unordered_count_ > 0)
+		{
+			if (unordered_count_ == 1)
+				std::inplace_merge(vals_.begin(), vals_.end() - 1, vals_.end());
+			else
+			{
+				auto ite = vals_.end() - unordered_count_;
+				std::sort(ite, vals_.end());
+
+				std::inplace_merge(vals_.begin(), ite, vals_.end());
+			}
+			
+			unordered_count_ = 0;
+		}
+
+		int64_t pos = vals_.size() >> 1;
+		if (vals_.size() & 1)
+			return vals_[pos];
+		else
+			return (vals_[pos - 1] + vals_[pos]) / 2.0;
+	}
+};
+
+template<typename T>
 class median_finder_impl_merge_t
 {
 	typedef T ele_typ;
@@ -178,9 +220,10 @@ public:
 class MedianFinder
 {
 	//median_finder_impl_merge_t<int> impl_;
+	//median_finder_impl_merge_ex_t<int> impl_;
+	//median_finder_impl_merge_ex2_t<int> impl_;
 	median_finder_impl_2heap_t<int> impl_;
 	//median_finder_impl_set_t<int> impl_;
-	//median_finder_impl_merge_ex_t<int> impl_;
 public:
 	void addNum(int num)
 	{
