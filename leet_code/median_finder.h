@@ -48,9 +48,9 @@ template<typename T>
 class median_finder_impl_set_t
 {
 	typedef T ele_typ;
-	std::set<ele_typ> vals_;
+	std::multiset<ele_typ> vals_;
 	int64_t lhs_count_, rhs_count_;
-	typename std::set<ele_typ>::iterator mid_ite_;
+	typename std::multiset<ele_typ>::iterator mid_ite_;
 public:
 	void add_num(ele_typ num)
 	{
@@ -221,29 +221,75 @@ public:
 	}
 };
 
+template<typename T>
+class median_finder_impl_2set_t
+{
+	typedef T ele_typ;
+	int count_;
+	std::multiset<ele_typ> rhs_set_;
+	std::multiset<ele_typ> lhs_set_;
+public:
+	median_finder_impl_2set_t() :count_(0){}
+
+	// Adds a number into the data structure.
+	void add_num(ele_typ num)
+	{
+		if (count_ & 1)
+		{
+			//adjust
+			if (!rhs_set_.empty() && num > *rhs_set_.begin())
+			{
+				rhs_set_.insert(num);
+				num = *rhs_set_.begin();
+				rhs_set_.erase(rhs_set_.begin());
+			}
+
+			//put to left
+			lhs_set_.insert(num);
+		}
+		else
+		{
+			//adjust
+			if (!lhs_set_.empty() && num < *lhs_set_.rbegin())
+			{
+				lhs_set_.insert(num);
+				num = *lhs_set_.rbegin();
+				lhs_set_.erase(--lhs_set_.end());
+			}
+
+			//put to right
+			rhs_set_.insert(num);
+		}
+
+		++count_;
+	}
+
+	// Returns the median of current data stream
+	double find_median() {
+		if (count_ & 1){
+			return *rhs_set_.begin();
+		}
+		else
+		{
+			return (*lhs_set_.rbegin() + *rhs_set_.begin()) / 2.0;
+		}
+	}
+};
+
 class MedianFinder
 {
 	//median_finder_impl_merge_t<int> impl_;
-	median_finder_impl_2heap_t<int> impl_1_;
-	median_finder_impl_set_t<int> impl_;
+	median_finder_impl_2heap_t<int> impl_;
+	//median_finder_impl_set_t<int> impl_;
+	//median_finder_impl_2set_t<int> impl_;
 public:
 	void addNum(int num)
 	{
-		fprintf(stdout, "%d, ", num);
-		impl_1_.add_num(num);
 		impl_.add_num(num);
 	}
 
 	double findMedian()
 	{
-		double mval1 = impl_1_.find_median();
-		double mval = impl_.find_median();
-		if (mval == mval1)
-			return mval;
-		else
-		{
-			fprintf(stdout, "\n2heap returns %I64f, set returns %I64f\n", mval1, mval);
-			return mval1;
-		}
+		return impl_.find_median();
 	}
 };
