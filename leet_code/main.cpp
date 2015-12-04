@@ -33,7 +33,7 @@ void test_median_finder(int count)
 	}
 	QueryPerformanceCounter((LARGE_INTEGER*)&t1);
 	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
-	fprintf(stdout, "finding median %d times costs %dms\n", count, (t1 - t0) * 1000 / freq);
+	fprintf(stdout, "finding median %d times costs %I64fms\n", count, ((t1 - t0) * 1000000 / freq) / 1000.0);
 }
 int main(int argc, char **argv)
 {
