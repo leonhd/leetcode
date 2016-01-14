@@ -1,25 +1,33 @@
 #pragma once
 #include <vector>
 #include <algorithm>
+#include <stdint.h>
 using std::vector;
 
-class Solution {
-	double median(int *beg, int count)
+template<typename T, typename IDX_TYP>
+class median_finder_impl_t
+{
+public:
+	typedef T src_typ;
+	typedef IDX_TYP idx_typ;
+
+private:
+	static double median(src_typ *beg, idx_typ count)
 	{
-		int pos = count >> 1;
+		idx_typ pos = count >> 1;
 		if (count & 1)
 			return beg[pos];
 		else
 			return (beg[pos - 1] + beg[pos]) / 2.0;
 	}
 
-	double find_median(int s1, int *s2_beg, int count2)
+	static double find_median(src_typ s1, src_typ *s2_beg, idx_typ count2)
 	{
 		//outside the range
 		if (s1 < s2_beg[0] || s1 > s2_beg[count2 - 1])
 		{
-			int count = count2 + 1;
-			int pos = count >> 1;
+			idx_typ count = count2 + 1;
+			idx_typ pos = count >> 1;
 
 			if (s1 > s2_beg[count2 - 1])
 			{
@@ -38,10 +46,10 @@ class Solution {
 		}
 
 		//inside the range
-		int cur = 0, stop = count2;
+		idx_typ cur = 0, stop = count2;
 		while (stop - cur > 1)
 		{
-			int pos = (cur + stop) >> 1;
+			idx_typ pos = (cur + stop) >> 1;
 
 			if (s2_beg[pos] > s1)
 			{
@@ -54,7 +62,7 @@ class Solution {
 		}
 
 		//get the result
-		int pos = count2 >> 1;
+		idx_typ pos = count2 >> 1;
 		if (count2 & 1)
 		{
 			if (cur < pos - 1)
@@ -75,7 +83,7 @@ class Solution {
 		}
 	}
 
-	double find_median(int s10, int s11, int *s2_beg, int count2)
+	static double find_median(src_typ s10, src_typ s11, src_typ *s2_beg, idx_typ count2)
 	{
 		if (s11 <= s2_beg[0])
 		{
@@ -85,9 +93,9 @@ class Solution {
 				return s2_beg[(count2 >> 1) - 1];
 			else
 			{
-				int pos = (count2 >> 1) - 1;
+				idx_typ pos = (count2 >> 1) - 1;
 				return (s2_beg[pos - 1] + s2_beg[pos]) / 2.0;
-			}				
+			}
 		}
 		else if (s10 >= s2_beg[count2 - 1])
 		{
@@ -97,15 +105,15 @@ class Solution {
 				return s2_beg[(count2 >> 1) + 1];
 			else
 			{
-				int pos = (count2 >> 1) + 1;
+				idx_typ pos = (count2 >> 1) + 1;
 				return (s2_beg[pos - 1] + s2_beg[pos]) / 2.0;
 			}
 		}
-		
-		int cur0 = 0, stop = count2;
+
+		idx_typ cur0 = 0, stop = count2;
 		while (stop - cur0 > 1)
 		{
-			int pos = (cur0 + stop) >> 1;
+			idx_typ pos = (cur0 + stop) >> 1;
 
 			if (s2_beg[pos] > s10)
 			{
@@ -120,10 +128,10 @@ class Solution {
 			cur0 = -1;
 
 		stop = count2;
-		int cur1 = 0;
+		idx_typ cur1 = 0;
 		while (stop - cur1 > 1)
 		{
-			int pos = (cur1 + stop) >> 1;
+			idx_typ pos = (cur1 + stop) >> 1;
 
 			if (s2_beg[pos] > s11)
 			{
@@ -135,7 +143,7 @@ class Solution {
 			}
 		}
 
-		int pos = (count2 >> 1);
+		idx_typ pos = (count2 >> 1);
 		if (count2 & 1)
 		{
 			if (cur0 >= pos)
@@ -183,7 +191,8 @@ class Solution {
 			}
 		}
 	}
-	double find_median(int *s1_beg, int count1, int *s2_beg, int count2)
+public:
+	static double find_median(src_typ *s1_beg, idx_typ count1, src_typ *s2_beg, idx_typ count2)
 	{
 		if (!count1)
 			return median(s2_beg, count2);
@@ -216,14 +225,170 @@ class Solution {
 			std::swap(count1, count2);
 		}
 
-		int cut_len1 = (count1 & 1) ? (count1 >> 1) : (count1 >> 1) - 1;
-		int cut_len2 = (count2 & 1) ? (count2 >> 1) : (count2 >> 1) - 1;
-		int cut_len = std::min<int>(cut_len1, cut_len2);
+		idx_typ cut_len1 = (count1 & 1) ? (count1 >> 1) : (count1 >> 1) - 1;
+		idx_typ cut_len2 = (count2 & 1) ? (count2 >> 1) : (count2 >> 1) - 1;
+		idx_typ cut_len = std::min<idx_typ>(cut_len1, cut_len2);
 
 		return find_median(s1_beg + cut_len, count1 - cut_len, s2_beg, count2 - cut_len);
 	}
+};
+
+template<typename T, typename IDX_TYP>
+class median_finder_impl_1_t
+{
+public:
+	typedef T src_typ;
+	typedef IDX_TYP idx_typ;
+
+private:
+	static double median(src_typ *beg, idx_typ count)
+	{
+		idx_typ pos = count >> 1;
+		if (count & 1)
+			return beg[pos];
+		else
+			return (beg[pos - 1] + beg[pos]) / 2.0;
+	}
+
+	static double find_median(src_typ s1, src_typ *s2_beg, idx_typ count2)
+	{
+		idx_typ pos = count2 >> 1;
+		if (count2 & 1)
+		{
+			if (s1 < s2_beg[pos - 1])
+				return (s2_beg[pos - 1] + s2_beg[pos]) / 2.0;
+			else if (s1 >= s2_beg[pos + 1])
+				return (s2_beg[pos] + s2_beg[pos + 1]) / 2.0;
+			else
+				return (s1 + s2_beg[pos]) / 2.0;
+		}
+		else
+		{
+			if (s1 < s2_beg[pos - 1])
+				return s2_beg[pos - 1];
+			else if (s1 >= s2_beg[pos])
+				return s2_beg[pos];
+			else
+				return s1;
+		}
+	}
+
+	static double find_median(src_typ s10, src_typ s11, src_typ *s2_beg, idx_typ count2)
+	{
+		idx_typ pos = (count2 >> 1);
+		if (count2 & 1)
+		{
+			if (s10 >= s2_beg[pos])
+			{
+				if (s10 < s2_beg[pos + 1])
+					return s10;
+				else
+					return s2_beg[pos + 1];
+			}
+			else if (s11 < s2_beg[pos])
+			{
+				if (s11 >= s2_beg[pos - 1])
+					return s11;
+				else
+					return s2_beg[pos - 1];
+			}
+			else
+				return s2_beg[pos];
+		}
+		else
+		{
+			if (count2 == 2)
+			{
+				if (s10 >= s2_beg[1])
+					return (s2_beg[1] + s10) / 2.0;
+				else if (s11 < s2_beg[0])
+					return (s11 + s2_beg[0]) / 2.0;
+				else
+				{
+					if (s10 >= s2_beg[0] && s11 < s2_beg[1])
+						return (s10 + s11) / 2.0;
+					else if (s10 < s2_beg[0] && s11 >= s2_beg[1])
+						return (s2_beg[0] + s2_beg[1]) / 2.0;
+					else if (s10 < s2_beg[0] && s11 < s2_beg[1])
+						return (s2_beg[0] + s11) / 2.0;
+					else
+						return (s10 + s2_beg[1]) / 2.0;
+				}
+			}
+			else
+			{
+				if (s10 >= s2_beg[pos])
+				{
+					if (s10 <= s2_beg[pos + 1])
+						return (s10 + s2_beg[pos]) / 2.0;
+					else
+						return (s2_beg[pos] + s2_beg[pos + 1]) / 2.0;
+				}
+				else if (s11 < s2_beg[pos - 1])
+				{
+					if (s11 > s2_beg[pos - 2])
+						return (s11 + s2_beg[pos - 1]) / 2.0;
+					else
+						return (s2_beg[pos - 2] + s2_beg[pos - 1]) / 2.0;
+				}
+				else
+				{
+					if (s10 >= s2_beg[pos - 1] && s11 < s2_beg[pos])
+						return (s10 + s11) / 2.0;
+					else if (s10 >= s2_beg[pos - 1] && s11 >= s2_beg[pos])
+						return (s10 + s2_beg[pos]) / 2.0;
+					else if (s10 < s2_beg[pos - 1] && s11 < s2_beg[pos])
+						return (s11 + s2_beg[pos - 1]) / 2.0;
+					return (s2_beg[pos - 1] + s2_beg[pos]) / 2.0;
+				}
+			}
+		}
+	}
+public:
+	static double find_median(src_typ *s1_beg, idx_typ count1, src_typ *s2_beg, idx_typ count2)
+	{
+		if (!count1)
+			return median(s2_beg, count2);
+
+		if (!count2)
+			return median(s1_beg, count1);
+
+		if (count1 == 1 && count2 == 1)
+			return (s1_beg[0] + s2_beg[0]) / 2.0;
+
+		if (count1 == 1)
+			return find_median(s1_beg[0], s2_beg, count2);
+
+		if (count2 == 1)
+			return find_median(s2_beg[0], s1_beg, count1);
+
+		if (count1 == 2)
+			return find_median(s1_beg[0], s1_beg[1], s2_beg, count2);
+
+		if (count2 == 2)
+			return find_median(s2_beg[0], s2_beg[1], s1_beg, count1);
+
+		double m1 = median(s1_beg, count1), m2 = median(s2_beg, count2);
+		if (m1 == m2)
+			return m1;
+
+		if (m1 > m2)
+		{
+			std::swap(s1_beg, s2_beg);
+			std::swap(count1, count2);
+		}
+
+		idx_typ cut_len1 = (count1 & 1) ? (count1 >> 1) : (count1 >> 1) - 1;
+		idx_typ cut_len2 = (count2 & 1) ? (count2 >> 1) : (count2 >> 1) - 1;
+		idx_typ cut_len = std::min<idx_typ>(cut_len1, cut_len2);
+
+		return find_median(s1_beg + cut_len, count1 - cut_len, s2_beg, count2 - cut_len);
+	}
+};
+
+class Solution {
 public:
 	double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-		return find_median(&nums1[0], nums1.size(), &nums2[0], nums2.size());
+		return median_finder_impl_1_t<int32_t, size_t>::find_median(&nums1[0], nums1.size(), &nums2[0], nums2.size());
 	}
 };
