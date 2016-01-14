@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="median.h" />
     <ClInclude Include="median_finder.h" />
+    <ClInclude Include="palindromic.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

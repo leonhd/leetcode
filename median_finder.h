@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <Windows.h>
 #include <functional>
+using namespace std;
 
 template<typename T>
 class median_finder_impl_merge_t

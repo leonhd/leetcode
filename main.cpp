@@ -1,5 +1,6 @@
-#include "median.h"
+//#include "median.h"
 #include "median_finder.h"
+#include "palindromic.h"
 #include <iostream>
 #include <time.h>
 
