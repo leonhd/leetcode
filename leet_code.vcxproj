@@ -142,6 +142,7 @@
     <ClInclude Include="median.h" />
     <ClInclude Include="median_finder.h" />
     <ClInclude Include="palindromic.h" />
+    <ClInclude Include="perfect_square.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
