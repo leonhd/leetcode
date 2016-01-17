@@ -27,6 +27,9 @@
     <ClInclude Include="perfect_square.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="rational_decimal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

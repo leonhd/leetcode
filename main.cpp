@@ -1,6 +1,7 @@
 //#include "median.h"
 #include "median_finder.h"
 #include "palindromic.h"
+#include "rational_decimal.h"
 #include <iostream>
 #include <time.h>
 
@@ -36,7 +37,22 @@ void test_median_finder(int count)
 	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
 	fprintf(stdout, "finding median %d times costs %I64fms\n", count, ((t1 - t0) * 1000000 / freq) / 1000.0);
 }
+
+void test_rational_calc(int32_t num, int32_t denom)
+{
+	std::cout << num << " / " << denom << " == " << rational_decimal_calculator_t::calc(num, denom) << std::endl;
+}
 int main(int argc, char **argv)
 {
-	test_median_finder(100000);
+// 	test_rational_calc(1, 1);
+// 	test_rational_calc(1, 2);
+// 	test_rational_calc(1, 3);
+// 	test_rational_calc(1, 4);
+// 	test_rational_calc(1, 5);
+	test_rational_calc(1, 6);
+// 	test_rational_calc(1, 7);
+// 	test_rational_calc(1, 8);
+
+	return 0;
+	//test_median_finder(100000);
 }
