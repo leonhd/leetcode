@@ -44,14 +44,26 @@ void test_rational_calc(int32_t num, int32_t denom)
 }
 int main(int argc, char **argv)
 {
-// 	test_rational_calc(1, 1);
-// 	test_rational_calc(1, 2);
-// 	test_rational_calc(1, 3);
-// 	test_rational_calc(1, 4);
-// 	test_rational_calc(1, 5);
+	test_rational_calc(1, 177);
+	test_rational_calc(1, 2);
+	test_rational_calc(1, 3);
+	test_rational_calc(1, 4);
+	test_rational_calc(1, 5);
 	test_rational_calc(1, 6);
-// 	test_rational_calc(1, 7);
-// 	test_rational_calc(1, 8);
+	test_rational_calc(1, 7);
+	test_rational_calc(1, 8);
+	test_rational_calc(1, 9);
+	test_rational_calc(1, 10);
+	test_rational_calc(1, 11);
+	test_rational_calc(1, 12);
+	test_rational_calc(1, 13);
+	test_rational_calc(1, 14);
+	test_rational_calc(1, 15);
+	test_rational_calc(1, 16);
+	test_rational_calc(1, 177);
+	test_rational_calc(1, 18);
+	test_rational_calc(1, 19);
+	test_rational_calc(1, 20);
 
 	return 0;
 	//test_median_finder(100000);
