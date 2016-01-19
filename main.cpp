@@ -44,7 +44,10 @@ void test_rational_calc(int32_t num, int32_t denom)
 }
 int main(int argc, char **argv)
 {
-	test_rational_calc(1, 177);
+	test_rational_calc(1204, -1);
+	test_rational_calc(1, 17);
+	test_rational_calc(1, 163);
+	test_rational_calc(1, 1024);
 	test_rational_calc(1, 2);
 	test_rational_calc(1, 3);
 	test_rational_calc(1, 4);

@@ -65,34 +65,34 @@ public:
 			r %= denominator;
 		}
 
-		char buf[1024];
+		char buf[64];
 		if (neg_ret)
 			sprintf_s(buf, "-%lld\0", quocient);
 		else
 			sprintf_s(buf, "%lld\0", quocient);
 		int32_t buf_str_len = strlen(buf);
+		vector<char> str_builder(buf, buf + buf_str_len);
 
 		if (decimal_vec.size())
 		{
-			buf[buf_str_len++] = '.';
+			str_builder.push_back('.');
 
 			int32_t loop_start = r ? remain2pos[r] : 0;
 			for (int32_t i = 0; i < loop_start; ++i)
-				buf[buf_str_len++] = '0' + decimal_vec[i];
+				str_builder.push_back('0' + decimal_vec[i]);
 
 			if (r)
-				buf[buf_str_len++] = '(';
+				str_builder.push_back('(');
 
 			for (int32_t i = loop_start; i < decimal_vec.size(); ++i)
-				buf[buf_str_len++] = '0' + decimal_vec[i];
+				str_builder.push_back('0' + decimal_vec[i]);
 
 			if (r)
-				buf[buf_str_len++] = ')';
-
-			buf[buf_str_len] = '\0';
+				str_builder.push_back(')');
 		}
+		str_builder.push_back('\0');
 
-		return buf;
+		return &str_builder[0];
 	}
 };
 
