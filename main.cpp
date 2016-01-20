@@ -2,6 +2,7 @@
 #include "median_finder.h"
 #include "palindromic.h"
 #include "rational_decimal.h"
+#include "integer_div.h"
 #include <iostream>
 #include <time.h>
 
@@ -42,31 +43,16 @@ void test_rational_calc(int32_t num, int32_t denom)
 {
 	std::cout << num << " / " << denom << " == " << rational_decimal_calculator_t::calc(num, denom) << std::endl;
 }
+void test_int_div(int32_t divident, int32_t divisor)
+{
+	std::cout << divident << " / " << divisor << " == " << integer_div_t::calc(divident, divisor) << std::endl;
+}
 int main(int argc, char **argv)
 {
-	test_rational_calc(1204, -1);
-	test_rational_calc(1, 17);
-	test_rational_calc(1, 163);
-	test_rational_calc(1, 1024);
-	test_rational_calc(1, 2);
-	test_rational_calc(1, 3);
-	test_rational_calc(1, 4);
-	test_rational_calc(1, 5);
-	test_rational_calc(1, 6);
-	test_rational_calc(1, 7);
-	test_rational_calc(1, 8);
-	test_rational_calc(1, 9);
-	test_rational_calc(1, 10);
-	test_rational_calc(1, 11);
-	test_rational_calc(1, 12);
-	test_rational_calc(1, 13);
-	test_rational_calc(1, 14);
-	test_rational_calc(1, 15);
-	test_rational_calc(1, 16);
-	test_rational_calc(1, 177);
-	test_rational_calc(1, 18);
-	test_rational_calc(1, 19);
-	test_rational_calc(1, 20);
+	test_int_div(INT_MIN, -1);
+	test_int_div(-1, -1);
+	test_int_div(2, 1);
+	test_int_div(1923423, 414);
 
 	return 0;
 	//test_median_finder(100000);

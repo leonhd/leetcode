@@ -51,6 +51,7 @@ public:
 		//loop
 		unordered_map<int32_t, int32_t> remain2pos;
 		vector<int8_t> decimal_vec;
+		decimal_vec.reserve(1024);
 		int32_t pos = 0;
 		int64_t r = numerator;
 		while (r)
@@ -70,26 +71,31 @@ public:
 			sprintf_s(buf, "-%lld\0", quocient);
 		else
 			sprintf_s(buf, "%lld\0", quocient);
+
+		if (!decimal_vec.size())
+			return buf;
+
 		int32_t buf_str_len = strlen(buf);
-		vector<char> str_builder(buf, buf + buf_str_len);
+		vector<char> str_builder;
+		str_builder.reserve(sizeof(buf) + decimal_vec.size() + 16);
+		str_builder.resize(buf_str_len);
+		std::copy(buf, buf + buf_str_len, str_builder.begin());
 
-		if (decimal_vec.size())
-		{
-			str_builder.push_back('.');
+		str_builder.push_back('.');
 
-			int32_t loop_start = r ? remain2pos[r] : 0;
-			for (int32_t i = 0; i < loop_start; ++i)
-				str_builder.push_back('0' + decimal_vec[i]);
+		int32_t loop_start = r ? remain2pos[r] : 0;
+		for (int32_t i = 0; i < loop_start; ++i)
+			str_builder.push_back('0' + decimal_vec[i]);
 
-			if (r)
-				str_builder.push_back('(');
+		if (r)
+			str_builder.push_back('(');
 
-			for (int32_t i = loop_start; i < decimal_vec.size(); ++i)
-				str_builder.push_back('0' + decimal_vec[i]);
+		for (int32_t i = loop_start; i < decimal_vec.size(); ++i)
+			str_builder.push_back('0' + decimal_vec[i]);
 
-			if (r)
-				str_builder.push_back(')');
-		}
+		if (r)
+			str_builder.push_back(')');
+		
 		str_builder.push_back('\0');
 
 		return &str_builder[0];
