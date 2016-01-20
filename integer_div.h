@@ -4,19 +4,6 @@
 
 class integer_div_t
 {
-	static int64_t calc_0(int64_t &divident, int64_t divisor)
-	{
-		int32_t shift = 0;
-		while (divident >= divisor)
-		{
-			divisor <<= 1;
-			++shift;
-		}		
-		
-		--shift;
-		divident -= (divisor >> 1);		
-		return ((int64_t)1) << shift;
-	}
 public:
 	static int32_t calc(int64_t dividend, int64_t divisor)
 	{
@@ -39,9 +26,28 @@ public:
 			return 0;
 
 		int64_t tmp = dividend, result = 0;
+		int64_t tmp_div = divisor;
+		int32_t shift = 0;
+		while (tmp_div <= tmp)
+		{
+			tmp_div <<= 1;
+			++shift;
+		}
+		--shift;
+		tmp_div >>= 1;
+		result += ((int64_t)1 << shift);
+		tmp -= tmp_div;
+
 		while (tmp >= divisor)
 		{
-			result += calc_0(tmp, divisor);
+			while (tmp_div > tmp)
+			{
+				tmp_div >>= 1;
+				--shift;
+			}
+
+			tmp -= tmp_div;
+			result += ((int64_t)1 << shift);
 		}
 
 		if (neg_ret)
