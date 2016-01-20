@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <iostream>
 using namespace std;
 
 class wildcard_matcher_t
@@ -7,38 +8,36 @@ class wildcard_matcher_t
 public:
 	static bool match(const char* src, const char *src_end, const char *pat, const char *pat_end)
 	{
-		while (src < src_end && pat < pat_end)
+		const char *sptr = nullptr, *pptr = nullptr;
+		while (src < src_end)
 		{
-			char cur_pat = *pat;
-			switch (cur_pat)
+			std::cout << src << " => " << pat << std::endl;
+			if (pat < pat_end && (*pat == '?' || *pat == *src))
 			{
-			case '?':
-				++pat;
 				++src;
-				break;
-			case '*':
+				++pat;
+			}
+			else if (pat < pat_end && *pat == '*')
 			{
-				const char *pat_next = pat + 1;
-				while (pat_next < pat_end && *pat_next == cur_pat)
-					++pat_next;
-
-				for (const char * ptr = src; ptr <= src_end; ++ptr)
-				{
-					if (match(ptr, src_end, pat_next, pat_end))
-						return true;
-				}
+				sptr = src + 1;
+				pptr = pat++;
+			}
+			else if (pptr)
+			{
+				src = sptr;
+				pat = pptr;
+				pptr = nullptr;
+				sptr = nullptr;
+			}
+			else
 				return false;
-			}
-			default:
-				if (cur_pat == *src)
-				{
-					++src;
-					++pat;
-				}
-				else
-					return false;
-				break;
-			}
+		}
+
+		while (pat < pat_end)
+		{
+			if (*pat != '*')
+				return false;
+			++pat;
 		}
 
 		return (src == src_end && pat == pat_end);

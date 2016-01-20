@@ -57,14 +57,15 @@ void test_str_wild_match(string src, string pat)
 	std::cout << src << " match " << pat << " => " << is_match << std::endl;
 }
 int main(int argc, char **argv)
-{			
+{
+	test_str_wild_match("abclbcabbcca", "*ab*bcca*");
 	test_str_wild_match("abbabaaabbabbaababbabbbbbabbbabbbabaaaaababababbbabababaabbababaabbbbbbaaaabababbbaabbbbaabbbbababababbaabbaababaabbbababababbbbaaabbbbbabaaaabbababbbbaababaabbababbbbbababbbabaaaaaaaabbbbbaabaaababaaaabb", "**aa*****ba*a*bb**aa*ab****a*aaaaaa***a*aaaa**bbabb*b*b**aaaaaaaaa*a********ba*bbb***a*ba*bb*bb**a*b*bb");
+	test_str_wild_match("aa", "a*");
+	test_str_wild_match("ab", "?*");
 	test_str_wild_match("aaabbbaabaaaaababaabaaabbabbbbbbbbaabababbabbbaaaaba", "a*******b");
 	test_str_wild_match("a", "aa");
 	test_str_wild_match("aa", "aa");
 	test_str_wild_match("aaa", "aa");
-	test_str_wild_match("aa", "a*");
-	test_str_wild_match("ab", "?*");
 	test_str_wild_match("aab", "c*a*b");
 	test_str_wild_match("aab", "a*b");
 
