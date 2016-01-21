@@ -39,6 +39,9 @@
     <ClInclude Include="decode_ways.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="text_justification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

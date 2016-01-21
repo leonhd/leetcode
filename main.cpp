@@ -5,6 +5,7 @@
 #include "integer_div.h"
 #include "wildcard_match.h"
 #include "decode_ways.h"
+#include "text_justification.h"
 #include <iostream>
 #include <time.h>
 
@@ -62,8 +63,31 @@ void test_str_decode(string str)
 {
 	std::cout << str << " can be decoded in " << str_decode_counter_t::calc(str) << " ways\n";
 }
+
+void test_text_justify()
+{
+	vector<string> words;
+	words.push_back("");
+	words.push_back("This");
+	words.push_back("is");
+	words.push_back("a");
+	words.push_back("example");
+	words.push_back("of");
+	words.push_back("text");
+	words.push_back("justification");
+	words.push_back("algorithm");
+	vector<string> ret = text_justifier_t::exec(words, 30);
+	for each (auto txt in ret)
+	{
+		std::cout << txt << std::endl;
+	}
+}
 int main(int argc, char **argv)
 {
+
+	test_text_justify();
+	return 0;
+
 	test_str_decode("1787897759966261825913315262377298132516969578441236833255596967132573482281598412163216914566534565");
 	test_str_decode("110");
 	test_str_decode("7541387519572282368613553811323167125532172369624572591562685959575371877973171856836975137559677665");

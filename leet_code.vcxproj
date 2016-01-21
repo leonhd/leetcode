@@ -146,6 +146,7 @@
     <ClInclude Include="palindromic.h" />
     <ClInclude Include="perfect_square.h" />
     <ClInclude Include="rational_decimal.h" />
+    <ClInclude Include="text_justification.h" />
     <ClInclude Include="wildcard_match.h" />
   </ItemGroup>
   <ItemGroup>
