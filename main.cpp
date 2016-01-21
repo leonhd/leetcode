@@ -4,6 +4,7 @@
 #include "rational_decimal.h"
 #include "integer_div.h"
 #include "wildcard_match.h"
+#include "decode_ways.h"
 #include <iostream>
 #include <time.h>
 
@@ -56,18 +57,29 @@ void test_str_wild_match(string src, string pat)
 	bool is_match = wildcard_matcher_t::match(psrc, psrc + src.length(), ppat, ppat + pat.length());
 	std::cout << src << " match " << pat << " => " << is_match << std::endl;
 }
+
+void test_str_decode(string str)
+{
+	std::cout << str << " can be decoded in " << str_decode_counter_t::calc(str) << " ways\n";
+}
 int main(int argc, char **argv)
 {
-	test_str_wild_match("abclbcabbcca", "*ab*bcca*");
-	test_str_wild_match("abbabaaabbabbaababbabbbbbabbbabbbabaaaaababababbbabababaabbababaabbbbbbaaaabababbbaabbbbaabbbbababababbaabbaababaabbbababababbbbaaabbbbbabaaaabbababbbbaababaabbababbbbbababbbabaaaaaaaabbbbbaabaaababaaaabb", "**aa*****ba*a*bb**aa*ab****a*aaaaaa***a*aaaa**bbabb*b*b**aaaaaaaaa*a********ba*bbb***a*ba*bb*bb**a*b*bb");
-	test_str_wild_match("aa", "a*");
-	test_str_wild_match("ab", "?*");
-	test_str_wild_match("aaabbbaabaaaaababaabaaabbabbbbbbbbaabababbabbbaaaaba", "a*******b");
-	test_str_wild_match("a", "aa");
-	test_str_wild_match("aa", "aa");
-	test_str_wild_match("aaa", "aa");
-	test_str_wild_match("aab", "c*a*b");
-	test_str_wild_match("aab", "a*b");
+	test_str_decode("1787897759966261825913315262377298132516969578441236833255596967132573482281598412163216914566534565");
+	test_str_decode("110");
+	test_str_decode("7541387519572282368613553811323167125532172369624572591562685959575371877973171856836975137559677665");
+	test_str_decode("1010");
+	// 	test_str_wild_match("abclbcabbcca", "*ab*bcca*");
+// 	test_str_wild_match("abbabaaabbabbaababbabbbbbabbbabbbabaaaaababababbbabababaabbababaabbbbbbaaaabababbbaabbbbaabbbbababababbaabbaababaabbbababababbbbaaabbbbbabaaaabbababbbbaababaabbababbbbbababbbabaaaaaaaabbbbbaabaaababaaaabb", "**aa*****ba*a*bb**aa*ab****a*aaaaaa***a*aaaa**bbabb*b*b**aaaaaaaaa*a********ba*bbb***a*ba*bb*bb**a*b*bb");
+// 	test_str_wild_match("aa", "a*");
+// 	test_str_wild_match("ab", "?*");
+// 	test_str_wild_match("aaabbbaabaaaaababaabaaabbabbbbbbbbaabababbabbbaaaaba", "a*******b");
+// 	test_str_wild_match("a", "aa");
+// 	test_str_wild_match("aa", "aa");
+// 	test_str_wild_match("aaa", "aa");
+// 	test_str_wild_match("aab", "c*a*b");
+// 	test_str_wild_match("aab", "a*b");
+
+
 
 	return 0;
 	//test_median_finder(100000);
