@@ -145,6 +145,7 @@
     <ClInclude Include="median_finder.h" />
     <ClInclude Include="palindromic.h" />
     <ClInclude Include="perfect_square.h" />
+    <ClInclude Include="range_sum_query.h" />
     <ClInclude Include="rational_decimal.h" />
     <ClInclude Include="text_justification.h" />
     <ClInclude Include="wildcard_match.h" />

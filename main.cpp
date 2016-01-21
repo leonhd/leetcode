@@ -6,6 +6,7 @@
 #include "wildcard_match.h"
 #include "decode_ways.h"
 #include "text_justification.h"
+#include "range_sum_query.h"
 #include <iostream>
 #include <time.h>
 
