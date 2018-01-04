@@ -9,6 +9,7 @@
 #include "range_sum_query.h"
 #include <iostream>
 #include <time.h>
+#include "merge_list.h"
 
 void test_median_finder(int count)
 {
@@ -29,6 +30,9 @@ void test_median_finder(int count)
 	std::vector<double> median;
 	median.reserve(data.size());
 
+	for (int i = 0; i < data.size(); ++i)
+		std::cout << data[i] << ", ";
+	std::cout << std::endl;
 	int64_t t0, t1, freq;
 	QueryPerformanceCounter((LARGE_INTEGER*)&t0);
 	for (int i = 0; i < data.size(); ++i)
@@ -36,7 +40,8 @@ void test_median_finder(int count)
 		mf.addNum(data[i]);
 
 		//if (i % 100 == 0)
-		median.push_back(mf.findMedian());
+		//median.push_back(mf.findMedian());
+		std::cout << mf.findMedian() << std::endl;
 	}
 	QueryPerformanceCounter((LARGE_INTEGER*)&t1);
 	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
@@ -83,8 +88,58 @@ void test_text_justify()
 		std::cout << txt << std::endl;
 	}
 }
+
+void reverseWords(string &s) {
+
+	std::vector<char> buf;
+	buf.resize(s.length() + 1);
+
+	const char *ptr = s.c_str();
+	const char *ptr_end = ptr + s.length();
+
+	const char *ptr_next = nullptr;
+	int32_t len = 0;
+	auto buf_beg = buf.begin();
+	
+	const char *ptr_cur = ptr_end - 1;
+	const char *ptr_beg_1 = ptr - 1;
+	while (ptr_cur > ptr_beg_1)
+	{
+		while (ptr_cur > ptr_beg_1 && *ptr_cur == ' ')
+			--ptr_cur;
+		if (ptr_cur == ptr_beg_1)
+			break;
+
+		ptr_next = ptr_cur;
+		while (ptr_next > ptr_beg_1 && *ptr_next != ' ')
+			--ptr_next;		
+		std::copy(ptr_next + 1, ptr_cur + 1, buf_beg + len);
+		len += ptr_cur - ptr_next + 1;
+		buf[len - 1] = ' ';
+
+		ptr_cur = ptr_next;
+	};
+
+	if (len > 0 && buf[len - 1] == ' ')
+		--len;
+	s.clear();
+	if (len > 0)
+		s.append(&buf[0], len);
+}
+
+
 int main(int argc, char **argv)
 {
+	string words = "pz! .xwy.,cga. vua frjrmcjfxxw'izz vgthvpfhl sldudifok wvls orujxroi w. oo c?ymxlptr ff' ? rh bsjjoyjwvx tj pqv.zlq, jlu',j dg izq.fo wtvwqn teual jnsv.a .oclyrvg tkgag'a' !wsz?sclc pvhl.ypq vyin cn?z,kxgu l ? l glr zf'hew l'wmi.nlvgr u zfwzra ? ot!emgg.rg, '.d.kp fn vat ba.myfqxe znzdrhh xjeubr taztndst v nep?bs .,pwin. e pi";//" abc  def hijklmn opqrst ";
+	reverseWords(words);
+	std::cout << words << "\n";
+	return 0;
+
+	test_merge(5, 10);
+	return 0;
+
+	test_median_finder(10);
+	return 0;
 
 	test_text_justify();
 	return 0;
@@ -107,5 +162,5 @@ int main(int argc, char **argv)
 
 
 	return 0;
-	//test_median_finder(100000);
+	
 }
